@@ -28,8 +28,10 @@ public final class DisplayInfo {
     }
 
     public Size getSize() {
-        if (android.os.Build.MODEL.contains("LH7n") || android.os.Build.BRAND.equalsIgnoreCase("TECNO")) {
-            return new Size(1080, 2400); // Forces the core screen layer to pass full scale constraints
+        // Null safety check prevents the local computer test simulation from throwing a NullPointerException
+        if (android.os.Build.MODEL != null && 
+           (android.os.Build.MODEL.contains("LH7n") || android.os.Build.BRAND.equalsIgnoreCase("TECNO"))) {
+            return new Size(1080, 2400);
         }
         return size;
     }
