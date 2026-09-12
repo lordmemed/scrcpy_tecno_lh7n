@@ -123,7 +123,7 @@ public class SurfaceEncoder implements AsyncProcessor {
                 // Custom patch for Tecno Android 14 aspect ratio/padding bug
                 if (android.os.Build.MODEL.contains("LH7n") || android.os.Build.BRAND.equalsIgnoreCase("TECNO")) {
                     targetWidth = 1080;
-                    targetHeight = 2400; 
+                    targetHeight = 2400;
                 }
 
                 format.setInteger(MediaFormat.KEY_WIDTH, targetWidth);
