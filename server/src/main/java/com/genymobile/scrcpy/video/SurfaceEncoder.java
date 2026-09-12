@@ -92,7 +92,12 @@ public class SurfaceEncoder implements AsyncProcessor {
         }
 
         // Do not constrain by the declared video encoder capabilities before encoding actually fails
-        videoConstraints = new VideoConstraints(maxSize, alignment, null);
+        if (android.os.Build.MODEL != null && (android.os.Build.MODEL.contains("LH7n") || android.os.Build.BRAND.equalsIgnoreCase("TECNO"))) {
+            // Forces the encoder to use structural alignment boundaries that break the hardware padding
+            videoConstraints = new VideoConstraints(maxSize, alignment, size);
+        } else {
+            videoConstraints = new VideoConstraints(maxSize, alignment, null);
+        }
 
         capture.init(captureControl, videoConstraints);
 
@@ -121,9 +126,10 @@ public class SurfaceEncoder implements AsyncProcessor {
                 int targetHeight = size.getHeight();
 
                 // Custom patch for Tecno Android 14 aspect ratio/padding bug
-                if (android.os.Build.MODEL.contains("LH7n") || android.os.Build.BRAND.equalsIgnoreCase("TECNO")) {
+                if (android.os.Build.MODEL != null && 
+                   (android.os.Build.MODEL.contains("LH7n") || android.os.Build.BRAND.equalsIgnoreCase("TECNO"))) {
                     targetWidth = 1080;
-                    targetHeight = 2400;
+                    targetHeight = 2400; 
                 }
 
                 format.setInteger(MediaFormat.KEY_WIDTH, targetWidth);
