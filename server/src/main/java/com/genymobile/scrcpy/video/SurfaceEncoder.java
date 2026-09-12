@@ -117,8 +117,17 @@ public class SurfaceEncoder implements AsyncProcessor {
                 capture.prepare();
                 Size size = capture.getSize();
 
-                format.setInteger(MediaFormat.KEY_WIDTH, size.getWidth());
-                format.setInteger(MediaFormat.KEY_HEIGHT, size.getHeight());
+                int targetWidth = size.getWidth();
+                int targetHeight = size.getHeight();
+
+                // Custom patch for Tecno Android 14 aspect ratio/padding bug
+                if (android.os.Build.MODEL.contains("LH7n") || android.os.Build.BRAND.equalsIgnoreCase("TECNO")) {
+                    targetWidth = 1080;
+                    targetHeight = 2400; 
+                }
+
+                format.setInteger(MediaFormat.KEY_WIDTH, targetWidth);
+                format.setInteger(MediaFormat.KEY_HEIGHT, targetHeight);
 
                 Surface surface = null;
                 boolean mediaCodecStarted = false;
@@ -143,7 +152,7 @@ public class SurfaceEncoder implements AsyncProcessor {
                             // The reset is due to a resize initiated by the client
                             boolean isClientResize = (resetReasons & CaptureControl.RESET_REASON_CLIENT_RESIZED) != 0
                                     && (resetReasons & CaptureControl.RESET_REASON_DISPLAY_PROPERTIES_CHANGED) == 0;
-                            streamer.writeSessionMeta(size.getWidth(), size.getHeight(), isClientResize);
+                            streamer.writeSessionMeta(targetWidth, targetHeight, isClientResize);
 
                             // If a reset is requested during encode(), it will interrupt the encoding by an EOS
                             encode(mediaCodec, streamer);
